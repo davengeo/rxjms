@@ -1,4 +1,8 @@
-package com.davengeo;
+/*
+ * Copyright (c) 2016 Proximus.
+ * me@davengeo.com
+ */
+package com.davengeo.jms;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;

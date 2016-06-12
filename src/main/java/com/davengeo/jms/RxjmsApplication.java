@@ -1,4 +1,8 @@
-package com.davengeo;
+/*
+ * Copyright (c) 2016 Proximus.
+ * me@davengeo.com
+ */
+package com.davengeo.jms;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
