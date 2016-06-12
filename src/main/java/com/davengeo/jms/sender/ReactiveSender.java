@@ -8,7 +8,7 @@ package com.davengeo.jms.sender;
 import com.davengeo.jms.conf.SenderProperties;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jms.core.JmsTemplate;
-import org.springframework.jms.core.MessagePostProcessor;
+import reactor.core.publisher.Mono;
 
 public class ReactiveSender {
 
@@ -21,16 +21,25 @@ public class ReactiveSender {
         this.senderProperties = senderProperties;
     }
 
-    public void convertAndSend(String destination, Object pojo, String correlationId, MessagePostProcessor messagePostProcessor) {
+    public void convertAndSend(String destination, Object pojo,
+                               String correlationId) {
         jmsTemplate.convertAndSend(destination, pojo, message -> {
             message.setJMSCorrelationID(correlationId);
-            messagePostProcessor.postProcessMessage(message);
             return message;
         });
     }
 
-    public void convertAndSend(Object pojo) {
-        jmsTemplate.convertAndSend(senderProperties.getDestination());
+    Mono<Void> send(Object pojo) {
+        return Mono.create(emitter -> {
+            try {
+                this.convertAndSend(senderProperties.getDestination(), pojo, "");
+                emitter.complete();
+            } catch (Exception ex) {
+                emitter.fail(ex);
+            }
+        })
+          .log()
+          .then();
     }
 
 
